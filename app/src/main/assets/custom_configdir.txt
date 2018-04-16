@@ -1,0 +1,11 @@
+[
+          {
+                    "featureType": "green",
+                    "elementType": "geometry",
+                    "stylers": {
+                              "color": "#ff00ffff",
+                              "hue": "#ff00ff",
+                              "lightness": 1
+                    }
+          }
+]
