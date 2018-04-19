@@ -7,7 +7,7 @@ import java.io.Serializable;
  */
 
 public class OverLay implements Serializable{
-
+    public boolean showInfoWindow=false;
     double lat,lng;
     String name,type;
 

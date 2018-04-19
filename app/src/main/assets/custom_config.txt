@@ -3,7 +3,7 @@
                     "featureType": "green",
                     "elementType": "geometry",
                     "stylers": {
-                              "color": "#ff00ffff",
+                              "color": "#ff0000ff",
                               "hue": "#ff00ff",
                               "lightness": 1
                     }

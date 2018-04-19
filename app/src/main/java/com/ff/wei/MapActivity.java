@@ -1,6 +1,8 @@
 package com.ff.wei;
 
 import bean.OverLay;
+import util.FileOperation;
+
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -26,6 +28,7 @@ import com.baidu.mapapi.SDKInitializer;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BitmapDescriptor;
 import com.baidu.mapapi.map.BitmapDescriptorFactory;
+import com.baidu.mapapi.map.InfoWindow;
 import com.baidu.mapapi.map.MapPoi;
 import com.baidu.mapapi.map.MapStatus;
 import com.baidu.mapapi.map.MapStatusUpdate;
@@ -36,6 +39,7 @@ import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.MyLocationConfiguration;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.map.OverlayOptions;
+import com.baidu.mapapi.map.TextOptions;
 import com.baidu.mapapi.model.LatLng;
 
 import java.io.BufferedReader;
@@ -56,24 +60,24 @@ import java.util.concurrent.Executors;
 
 import static android.util.Log.d;
 
-public class MapActivity extends AppCompatActivity {
+public class MapActivity extends AppCompatActivity implements View.OnClickListener{
     private BaiduMap.OnMarkerClickListener markListener=null;
-    private MapView mMapView = null;
-    private BaiduMap mBaiduMap;
+    public static  MapView mMapView = null;
+    public static BaiduMap mBaiduMap;
     //模式切换，正常模式
     private boolean modeFlag = true;
     //当前地图缩放级别
     private float zoomLevel;
     //定位相关
-    private LocationClient mLocationClient;
+    public static LocationClient mLocationClient;
     private MyLocationListener mLocationListener;
     //是否第一次定位，如果是第一次定位的话要将自己的位置显示在地图 中间
     private boolean isFirstLocation = true;
     //创建自己的箭头定位
     private BitmapDescriptor bitmapDescriptor;
     //经纬度
-    double mLatitude;
-    double mLongitude;
+    public static double mLatitude;
+    public static double mLongitude;
     //方向传感器监听
     private float mLastX;
     //显示marker
@@ -85,12 +89,10 @@ public class MapActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         makePermission();// 请求权限
-        setMapCustomFile();
+        setMapCustomStyle();//设置地图风格
 
-
-
-        //在使用SDK各组件之前初始化context信息，传入ApplicationContext
-        //注意该方法要再setContentView方法之前实现
+        //在意该使用SDK各组件之前初始化context信息，传入ApplicationContext
+        //注方法要再setContentView方法之前实现
         SDKInitializer.initialize(getApplicationContext());
         setContentView(R.layout.activity_map);
 
@@ -183,17 +185,18 @@ public class MapActivity extends AppCompatActivity {
     private void initView() {
         //地图控制按钮
         addOver=(Button)findViewById(R.id.addOverLay);
+        addOver.setOnClickListener(this);
 
     }
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.addOverLay:
-                addOverlayTest();
+                isFirstLocation=true;
                 break;
         }
     }
     //显示marker
-    private void addOverlay(OverLay over) {
+    private void addOverlay(final OverLay over) {
         //清空地图
         mBaiduMap.clear();
         //创建marker的显示图标
@@ -201,20 +204,30 @@ public class MapActivity extends AppCompatActivity {
         LatLng latLng = null;
         Marker marker;
         OverlayOptions options;
-            latLng = new LatLng(over.getLat(),over.getLng());
+        latLng = new LatLng(over.getLat(),over.getLng());
             //设置marker
-            options = new MarkerOptions()
+        options = new MarkerOptions()
                     .position(latLng)//设置位置
                     .icon(bitmap)//设置图标样式
                     .zIndex(9) // 设置marker所在层级
                     .draggable(false); // 设置手势拖拽;
             //添加marker
-            marker = (Marker) mBaiduMap.addOverlay(options);
-            //使用marker携带info信息，当点击事件的时候可以通过marker获得info信息
-            Bundle bundle = new Bundle();
+        marker = (Marker) mBaiduMap.addOverlay(options);
+
+        OverlayOptions textOption = new TextOptions()
+                .bgColor(0xAAFFFF00)
+                .fontSize(20)
+                .fontColor(0xFFFF00FF)
+                .text(over.getName())
+                .rotate(0)
+                .position(latLng);
+        //在地图上添加该文字对象并显示
+        mBaiduMap.addOverlay(textOption);
+        //使用marker携带info信息，当点击事件的时候可以通过marker获得info信息
+        Bundle bundle = new Bundle();
             //info必须实现序列化接口
-            bundle.putSerializable("overLays", over);
-            marker.setExtraInfo(bundle);
+        bundle.putSerializable("overLays", over);
+        marker.setExtraInfo(bundle);
         //添加marker点击事件的监听
         if(markListener!=null){
             mBaiduMap.removeMarkerClickListener(markListener); //防止监听重叠
@@ -226,12 +239,26 @@ public class MapActivity extends AppCompatActivity {
                 Bundle bundle = marker.getExtraInfo();
                 OverLay u = (OverLay) bundle.getSerializable("overLays");
                 //将信息显示在界面上
-                //Log.d("info",infoUtil.toString());
                 if(u==null){
                     d("info","no getting");
                     return false;
                 }
                 d("info","clickTest:"+u.getLat());
+
+                if(u.showInfoWindow){
+                    u.showInfoWindow=false;
+                    bundle.putSerializable("overLays",u);
+                    mBaiduMap.hideInfoWindow();
+                }else{
+                    u.showInfoWindow=true;
+                    //创建InfoWindow展示的view
+                    Button button = new Button(getApplicationContext());
+                    button.setText(u.getName());
+
+                    LatLng pt = new LatLng(over.getLat(), over.getLng());
+                    InfoWindow mInfoWindow = new InfoWindow(button, pt, -47);
+                    mBaiduMap.showInfoWindow(mInfoWindow);
+                }
                 return true;
             }
         };
@@ -242,7 +269,6 @@ public class MapActivity extends AppCompatActivity {
         @Override
         public void onReceiveLocation(BDLocation location) {
             //将获取的location信息给百度map
-
             MyLocationData data = new MyLocationData.Builder()
                     .accuracy(location.getRadius())
                     // 此处设置开发者获取到的方向信息，顺时针0-360
@@ -264,11 +290,11 @@ public class MapActivity extends AppCompatActivity {
                 Log.d("testt","loc:"+location+"\nlat:"+location.getLatitude()+"\nlng:"+location.getLongitude());
                 //获取经纬度
                 LatLng ll = new LatLng(location.getLatitude(),location.getLongitude());
-                OverLay myself=new OverLay(location.getLatitude(),location.getLongitude(),"nick","user");
+                OverLay myself=new OverLay(mLatitude,mLongitude,"myself","user");
                 addOverlay(myself);
                 MapStatusUpdate status = MapStatusUpdateFactory.newLatLng(ll);
-                mBaiduMap.setMapStatus(status);//直接到中间
-               // mBaiduMap.animateMapStatus(status);//动画的方式到中间
+                //mBaiduMap.setMapStatus(status);//直接到中间
+                mBaiduMap.animateMapStatus(status);//动画的方式到中间
                 isFirstLocation = false;
             }
             //mBaiduMap.clear();
@@ -354,42 +380,27 @@ public class MapActivity extends AppCompatActivity {
         Toast.makeText(MapActivity.this, str, Toast.LENGTH_SHORT).show();
     }
 
-    public void setMapCustomFile() {
-        FileOutputStream out = null;
+    public void setMapCustomStyle() {
         InputStream inputStream = null;
         try {
-            Log.d("Status","ok");
-            inputStream = getAssets().open("custom_configdir.txt");
-
-            byte[] b = new byte[inputStream.available()];
-            inputStream.read(b);
-            String moduleName ="/storage/emulated/0/";
-            File f = new File(moduleName +"/map_style.txt");
-            if (f.exists()) {
-                f.delete();
+            inputStream = getAssets().open("custom_config.txt");
+            String dst="/storage/emulated/0/map_style.txt";
+            if(FileOperation.copyFile(inputStream,dst)){
+                MapView.setCustomMapStylePath(dst);
+            }else{
+                showInfo("filecopyfailed");
             }
-            f.createNewFile();
-            out = new FileOutputStream(f);
-            out.write(b);
-            MapView.setCustomMapStylePath(moduleName + "/map_style.txt");
-
         } catch (IOException e) {
             e.printStackTrace();
+            showInfo("exception");
         } finally {
             try {
                 if (inputStream != null) {
                     inputStream.close();
-                }
-                if (out != null) {
-                    out.close();
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
-    public void addOverlayTest(){
-
-    }
-
 }
