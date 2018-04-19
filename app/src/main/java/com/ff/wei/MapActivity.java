@@ -2,10 +2,12 @@ package com.ff.wei;
 
 import bean.OverLay;
 import util.FileOperation;
+import util.GetPermission;
 
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -60,7 +62,7 @@ import java.util.concurrent.Executors;
 
 import static android.util.Log.d;
 
-public class MapActivity extends AppCompatActivity implements View.OnClickListener{
+public class MapActivity extends AppCompatActivity implements View.OnClickListener,ActivityCompat.OnRequestPermissionsResultCallback {
     private BaiduMap.OnMarkerClickListener markListener=null;
     public static  MapView mMapView = null;
     public static BaiduMap mBaiduMap;
@@ -74,10 +76,9 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
     //是否第一次定位，如果是第一次定位的话要将自己的位置显示在地图 中间
     private boolean isFirstLocation = true;
     //创建自己的箭头定位
-    private BitmapDescriptor bitmapDescriptor;
+    private BitmapDescriptor bitmapDescriptorRound,bitmapDescriptorSquare;
     //经纬度
-    public static double mLatitude;
-    public static double mLongitude;
+    public static OverLay Myself=new OverLay();
     //方向传感器监听
     private float mLastX;
     //显示marker
@@ -88,8 +89,10 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        makePermission();// 请求权限
+        GetPermission.makePermission(MapActivity.this,MapActivity.this);// 请求权限
         setMapCustomStyle();//设置地图风格
+
+        addTestData();
 
         //在意该使用SDK各组件之前初始化context信息，传入ApplicationContext
         //注方法要再setContentView方法之前实现
@@ -109,7 +112,8 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
 
     private void initMyLoc() {
         //初始化图标
-        bitmapDescriptor = BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher_round);
+        bitmapDescriptorRound = BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher_round);
+        bitmapDescriptorSquare = BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher);
     }
     private void initMap() {
         //获取地图控件引用
@@ -186,7 +190,16 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
         //地图控制按钮
         addOver=(Button)findViewById(R.id.addOverLay);
         addOver.setOnClickListener(this);
+    }
 
+    public void addTestData(){
+        Myself.setName("nickcle");
+        Myself.setType("user");
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        GetPermission.onRequestPermissionsResult(requestCode,permissions,grantResults);
     }
     public void onClick(View v) {
         switch (v.getId()) {
@@ -199,8 +212,13 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
     private void addOverlay(final OverLay over) {
         //清空地图
         mBaiduMap.clear();
+        BitmapDescriptor bitmap;
         //创建marker的显示图标
-        BitmapDescriptor bitmap = BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher);
+        if(over.getType().equals("user")){
+            bitmap = BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher_round);
+        }else{
+            bitmap = BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher);
+        }
         LatLng latLng = null;
         Marker marker;
         OverlayOptions options;
@@ -214,6 +232,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
             //添加marker
         marker = (Marker) mBaiduMap.addOverlay(options);
 
+        //添加上方文字
         OverlayOptions textOption = new TextOptions()
                 .bgColor(0xAAFFFF00)
                 .fontSize(20)
@@ -221,8 +240,8 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
                 .text(over.getName())
                 .rotate(0)
                 .position(latLng);
-        //在地图上添加该文字对象并显示
         mBaiduMap.addOverlay(textOption);
+
         //使用marker携带info信息，当点击事件的时候可以通过marker获得info信息
         Bundle bundle = new Bundle();
             //info必须实现序列化接口
@@ -243,8 +262,9 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
                     d("info","no getting");
                     return false;
                 }
-                d("info","clickTest:"+u.getLat());
+                d("info","clickTest:"+u.getName());
 
+                //添加消息窗口
                 if(u.showInfoWindow){
                     u.showInfoWindow=false;
                     bundle.putSerializable("overLays",u);
@@ -278,11 +298,10 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
                     .build();
             mBaiduMap.setMyLocationData(data);
             //更新经纬度
-            mLatitude = location.getLatitude();
-            mLongitude = location.getLongitude();
-            Log.d("MyLat:",mLatitude+"");
+            Myself.setLat(location.getLatitude());
+            Myself.setLng(location.getLongitude());
             //配置定位图层显示方式，使用自己的定位图标
-            MyLocationConfiguration configuration = new MyLocationConfiguration(MyLocationConfiguration.LocationMode.NORMAL, true, bitmapDescriptor);
+            MyLocationConfiguration configuration = new MyLocationConfiguration(MyLocationConfiguration.LocationMode.NORMAL, true, bitmapDescriptorRound);
             mBaiduMap.setMyLocationConfigeration(configuration);
             if(isFirstLocation&&location.getAddrStr()!=null){
                 showInfo("loc:"+location+"\nlat:"+location.getLatitude()+"\nlng:"+location.getLongitude());
@@ -290,55 +309,18 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
                 Log.d("testt","loc:"+location+"\nlat:"+location.getLatitude()+"\nlng:"+location.getLongitude());
                 //获取经纬度
                 LatLng ll = new LatLng(location.getLatitude(),location.getLongitude());
-                OverLay myself=new OverLay(mLatitude,mLongitude,"myself","user");
-                addOverlay(myself);
+                addOverlay(Myself);
                 MapStatusUpdate status = MapStatusUpdateFactory.newLatLng(ll);
                 //mBaiduMap.setMapStatus(status);//直接到中间
                 mBaiduMap.animateMapStatus(status);//动画的方式到中间
                 isFirstLocation = false;
             }
             //mBaiduMap.clear();
-            if(!overLays.contains(new OverLay(mLatitude,mLongitude,"test","user"))){
-                overLays.add(new OverLay(mLatitude,mLongitude,"test","user") );
-            }
             //addOverlay(overLays);
 
         }
     }
-  public void makePermission(){
-        List<String> permissionList = new ArrayList<>();
-        if (ContextCompat.checkSelfPermission(MapActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            permissionList.add(Manifest.permission.ACCESS_FINE_LOCATION);
-        }
-        if (ContextCompat.checkSelfPermission(MapActivity.this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-            permissionList.add(Manifest.permission.READ_PHONE_STATE);
-        }
-        if (ContextCompat.checkSelfPermission(MapActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            permissionList.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        }
-        if (!permissionList.isEmpty()) {
-            String[] permissionStr = permissionList.toArray(new String[permissionList.size()]);
-            ActivityCompat.requestPermissions(MapActivity.this, permissionStr, 111);//requestCode=1
-        }
-    }
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        switch (requestCode) {
-            case 111:                                                             //requestCode=1
-                if (grantResults.length > 0) {
-                    for (int x = 0; x < grantResults.length && x < permissions.length; ++x) {
-                        if (grantResults[x] != PackageManager.PERMISSION_GRANTED) {
-                            Toast.makeText(MapActivity.this, "同意啊", Toast.LENGTH_SHORT).show();
-                            ActivityCompat.requestPermissions(MapActivity.this, new String[]{permissions[x]}, 1);   //requestCode=1
-                        }
-                    }
-                } else {
-                    Toast.makeText(MapActivity.this, "未知错误", Toast.LENGTH_SHORT).show();
-                    finish();
-                }
-                break;
-            default:
-        }
-    }
+
     @Override
     protected void onStart() {
         super.onStart();

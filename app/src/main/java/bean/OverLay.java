@@ -9,7 +9,9 @@ import java.io.Serializable;
 public class OverLay implements Serializable{
     public boolean showInfoWindow=false;
     double lat,lng;
-    String name,type;
+    String name,type,id;
+
+    public OverLay(){}
 
     public OverLay(double lat, double lng, String name, String type) {
         this.lat = lat;
@@ -17,6 +19,15 @@ public class OverLay implements Serializable{
         this.name = name;
         this.type = type;
     }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public double getLat() {
         return lat;
     }
