@@ -1,11 +1,17 @@
 [
           {
-                    "featureType": "green",
-                    "elementType": "geometry",
+                    "featureType": "road",
+                    "elementType": "all",
                     "stylers": {
-                              "color": "#ff0000ff",
-                              "hue": "#ff00ff",
-                              "lightness": 1
+                              "color": "#6aa84fff",
+                              "hue": "#6aa84f"
+                    }
+          },
+          {
+                    "featureType": "education",
+                    "elementType": "geometry.fill",
+                    "stylers": {
+                              "color": "#ffd966ff"
                     }
           }
 ]
