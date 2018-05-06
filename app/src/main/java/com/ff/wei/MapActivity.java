@@ -7,9 +7,11 @@ import util.GetPermission;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -78,9 +81,10 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
     //创建自己的箭头定位
     private BitmapDescriptor bitmapDescriptorRound,bitmapDescriptorSquare;
     //经纬度
+    LatLng myLastLoction=new LatLng(-1,-1);
     public static OverLay Myself=new OverLay();
     //方向传感器监听
-    private float mLastX;
+    private float mLastDirect;
     //显示marker
     private boolean showMarker = false;
 
@@ -141,7 +145,6 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
 
             @Override
             public void onMapStatusChangeStart(MapStatus mapStatus) {
-
             }
 
             @Override
@@ -162,10 +165,20 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
         mBaiduMap.setOnMapClickListener(new BaiduMap.OnMapClickListener() {
             @Override
             public boolean onMapPoiClick(MapPoi arg0) {
+                Log.d("myTest","onMapPoiClick:"+arg0.toString());
                 return false;
             }
             @Override
             public void onMapClick(LatLng arg0) {
+                Log.d("myTest","onMapClick:"+arg0.toString());
+
+                Button button = new Button(getApplicationContext());
+                button.setText("test");
+                LatLng pt = new LatLng(arg0.latitude,arg0.longitude);
+                InfoWindow mInfoWindow = new InfoWindow(button, pt, 0 );
+                InfoWindow mInfoWindow2 = new InfoWindow(button, pt, -10 );
+                mBaiduMap.showInfoWindow(mInfoWindow);
+                mBaiduMap.showInfoWindow(mInfoWindow2);
             }
         });
     }
@@ -235,7 +248,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
         //添加上方文字
         OverlayOptions textOption = new TextOptions()
                 .bgColor(0xAAFFFF00)
-                .fontSize(20)
+                .fontSize(50)
                 .fontColor(0xFFFF00FF)
                 .text(over.getName())
                 .rotate(0)
@@ -276,7 +289,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
                     button.setText(u.getName());
 
                     LatLng pt = new LatLng(over.getLat(), over.getLng());
-                    InfoWindow mInfoWindow = new InfoWindow(button, pt, -47);
+                    InfoWindow mInfoWindow = new InfoWindow(button, pt, -150);
                     mBaiduMap.showInfoWindow(mInfoWindow);
                 }
                 return true;
@@ -288,11 +301,17 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
     class MyLocationListener implements BDLocationListener {
         @Override
         public void onReceiveLocation(BDLocation location) {
+            //若位置并未改变则直接跳出函数
+            if(myLastLoction.latitude==location.getLatitude()&&myLastLoction.longitude==location.getLongitude()){
+                return ;
+            }
+            myLastLoction=new LatLng(location.getLatitude(),location.getLongitude());
+            Log.d("myTest","location changed");
             //将获取的location信息给百度map
             MyLocationData data = new MyLocationData.Builder()
                     .accuracy(location.getRadius())
                     // 此处设置开发者获取到的方向信息，顺时针0-360
-                    .direction(mLastX)
+                    .direction(mLastDirect)
                     .latitude(location.getLatitude())
                     .longitude(location.getLongitude())
                     .build();
@@ -308,13 +327,14 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
                 showInfo("位置：" + location.getAddrStr());
                 Log.d("testt","loc:"+location+"\nlat:"+location.getLatitude()+"\nlng:"+location.getLongitude());
                 //获取经纬度
-                LatLng ll = new LatLng(location.getLatitude(),location.getLongitude());
-                addOverlay(Myself);
-                MapStatusUpdate status = MapStatusUpdateFactory.newLatLng(ll);
-                //mBaiduMap.setMapStatus(status);//直接到中间
-                mBaiduMap.animateMapStatus(status);//动画的方式到中间
                 isFirstLocation = false;
             }
+            //地图变化显示
+            LatLng ll = new LatLng(location.getLatitude(),location.getLongitude());
+            addOverlay(Myself);
+            MapStatusUpdate status = MapStatusUpdateFactory.newLatLng(ll);
+            //mBaiduMap.setMapStatus(status);//直接到中间
+            mBaiduMap.animateMapStatus(status);//动画的方式到中间
             //mBaiduMap.clear();
             //addOverlay(overLays);
 
