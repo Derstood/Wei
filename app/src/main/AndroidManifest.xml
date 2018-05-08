@@ -9,11 +9,25 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MapActivity">
+        <activity android:name=".MapActivity"></activity>
+        <activity
+            android:name="com.ff.message.MessageListActivity"
+            android:label="@string/title_activity_message_list"
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.ff.message.testActivity"
+            android:label="@string/title_activity_test"
+            android:theme="@style/AppTheme">
+            <intent-filter>
+                <action android:name="Chat_Action"/>
+                <category android:name="Chat_Category"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
     </application>
