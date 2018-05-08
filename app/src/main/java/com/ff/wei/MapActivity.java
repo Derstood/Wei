@@ -15,6 +15,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -22,6 +23,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.baidu.location.BDAbstractLocationListener;
@@ -46,6 +48,12 @@ import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.map.TextOptions;
 import com.baidu.mapapi.model.LatLng;
+import com.baidu.mapapi.search.core.SearchResult;
+import com.baidu.mapapi.search.geocode.GeoCodeResult;
+import com.baidu.mapapi.search.geocode.GeoCoder;
+import com.baidu.mapapi.search.geocode.OnGetGeoCoderResultListener;
+import com.baidu.mapapi.search.geocode.ReverseGeoCodeOption;
+import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -90,6 +98,9 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
 
     private List<OverLay> overLays=new ArrayList<>();
     private Button addOver;
+
+    private View tips;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -141,8 +152,6 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
         mBaiduMap.setMapStatus(mMapStatusUpdate);
         //设置地图状态改变监听器
         mBaiduMap.setOnMapStatusChangeListener(new BaiduMap.OnMapStatusChangeListener() {
-
-
             @Override
             public void onMapStatusChangeStart(MapStatus mapStatus) {
             }
@@ -165,20 +174,32 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
         mBaiduMap.setOnMapClickListener(new BaiduMap.OnMapClickListener() {
             @Override
             public boolean onMapPoiClick(MapPoi arg0) {
-                Log.d("myTest","onMapPoiClick:"+arg0.toString());
                 return false;
             }
             @Override
             public void onMapClick(LatLng arg0) {
                 Log.d("myTest","onMapClick:"+arg0.toString());
-
-                Button button = new Button(getApplicationContext());
-                button.setText("test");
-                LatLng pt = new LatLng(arg0.latitude,arg0.longitude);
-                InfoWindow mInfoWindow = new InfoWindow(button, pt, 0 );
-                InfoWindow mInfoWindow2 = new InfoWindow(button, pt, -10 );
-                mBaiduMap.showInfoWindow(mInfoWindow);
-                mBaiduMap.showInfoWindow(mInfoWindow2);
+                GeoCoder mSearch = GeoCoder.newInstance();
+                OnGetGeoCoderResultListener listener = new OnGetGeoCoderResultListener() {
+                    public void onGetGeoCodeResult(GeoCodeResult result) {
+                        if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
+                            //没有检索到结果
+                        }
+                        //获取地理编码结果
+                    }
+                    public void onGetReverseGeoCodeResult(ReverseGeoCodeResult result) {
+                        if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
+                            //没有找到检索结果
+                        }
+                        //获取反向地理编码结果
+                        //showInfo("addr:"+result.getAddress());
+                        createView(result.getAddress());
+                    }
+                };
+                mSearch.setOnGetGeoCodeResultListener(listener);
+                mSearch.reverseGeoCode(new ReverseGeoCodeOption()
+                        .location(new LatLng(arg0.latitude,arg0.longitude)));
+                mSearch.destroy();
             }
         });
     }
@@ -217,7 +238,10 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.addOverLay:
-                isFirstLocation=true;
+
+                backToCenter();
+                createView("hhh");
+
                 break;
         }
     }
@@ -232,10 +256,9 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
         }else{
             bitmap = BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher);
         }
-        LatLng latLng = null;
+        LatLng latLng = new LatLng(over.getLat(),over.getLng());
         Marker marker;
         OverlayOptions options;
-        latLng = new LatLng(over.getLat(),over.getLng());
             //设置marker
         options = new MarkerOptions()
                     .position(latLng)//设置位置
@@ -272,10 +295,10 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
                 OverLay u = (OverLay) bundle.getSerializable("overLays");
                 //将信息显示在界面上
                 if(u==null){
-                    d("info","no getting");
+                    Log.d("info","no getting");
                     return false;
                 }
-                d("info","clickTest:"+u.getName());
+                Log.d("info","clickTest:"+u.getName());
 
                 //添加消息窗口
                 if(u.showInfoWindow){
@@ -326,15 +349,11 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
                 showInfo("loc:"+location+"\nlat:"+location.getLatitude()+"\nlng:"+location.getLongitude());
                 showInfo("位置：" + location.getAddrStr());
                 Log.d("testt","loc:"+location+"\nlat:"+location.getLatitude()+"\nlng:"+location.getLongitude());
-                //获取经纬度
                 isFirstLocation = false;
+                //地图变化显示
+                backToCenter();
             }
-            //地图变化显示
-            LatLng ll = new LatLng(location.getLatitude(),location.getLongitude());
-            addOverlay(Myself);
-            MapStatusUpdate status = MapStatusUpdateFactory.newLatLng(ll);
-            //mBaiduMap.setMapStatus(status);//直接到中间
-            mBaiduMap.animateMapStatus(status);//动画的方式到中间
+
             //mBaiduMap.clear();
             //addOverlay(overLays);
 
@@ -405,4 +424,33 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
             }
         }
     }
+
+    public void createView(String str){
+        if(tips==null){
+            LayoutInflater inflater=getLayoutInflater();
+            LinearLayout view= (LinearLayout) inflater.inflate(R.layout.test,null);
+            TextView text= (TextView) view.getChildAt(0);
+            text.setText(str);
+            LinearLayout thiss= (LinearLayout) findViewById(R.id.map);
+            LinearLayout thisss= (LinearLayout) thiss.getChildAt(0);
+            thisss.addView(view);
+            tips=view;
+        }else{
+            LinearLayout thiss= (LinearLayout) findViewById(R.id.map);
+            LinearLayout thisss= (LinearLayout) thiss.getChildAt(0);
+            thisss.removeView(tips);
+            tips=null;
+        }
+
+
+    }
+
+    public void backToCenter(){
+        LatLng ll = new LatLng(Myself.getLat(),Myself.getLng());
+        addOverlay(Myself);
+        MapStatusUpdate status = MapStatusUpdateFactory.newLatLng(ll);
+        //mBaiduMap.setMapStatus(status);//直接到中间
+        mBaiduMap.animateMapStatus(status);//动画的方式到中间
+    }
+
 }
