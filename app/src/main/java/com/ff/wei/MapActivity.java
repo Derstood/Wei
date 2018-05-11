@@ -4,29 +4,20 @@ import bean.OverLay;
 import util.FileOperation;
 import util.GetPermission;
 
-import android.Manifest;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.location.Location;
+import android.app.Activity;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+import android.view.Window;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
@@ -55,25 +46,14 @@ import com.baidu.mapapi.search.geocode.OnGetGeoCoderResultListener;
 import com.baidu.mapapi.search.geocode.ReverseGeoCodeOption;
 import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import static android.util.Log.d;
 
-public class MapActivity extends AppCompatActivity implements View.OnClickListener,ActivityCompat.OnRequestPermissionsResultCallback {
+public class MapActivity extends Activity implements View.OnClickListener,ActivityCompat.OnRequestPermissionsResultCallback {
     private BaiduMap.OnMarkerClickListener markListener=null;
     public static  MapView mMapView = null;
     public static BaiduMap mBaiduMap;
@@ -112,6 +92,8 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
         //在意该使用SDK各组件之前初始化context信息，传入ApplicationContext
         //注方法要再setContentView方法之前实现
         SDKInitializer.initialize(getApplicationContext());
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+
         setContentView(R.layout.activity_map);
 
         //初始化控件
@@ -222,7 +204,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
     }
     private void initView() {
         //地图控制按钮
-        addOver=(Button)findViewById(R.id.addOverLay);
+        addOver=(Button)findViewById(R.id.testBT);
         addOver.setOnClickListener(this);
     }
 
@@ -237,10 +219,10 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
     }
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.addOverLay:
+            case R.id.testBT:
 
                 backToCenter();
-                createView("hhh");
+                //createView("hhh");
 
                 break;
         }
@@ -428,7 +410,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
     public void createView(String str){
         if(tips==null){
             LayoutInflater inflater=getLayoutInflater();
-            LinearLayout view= (LinearLayout) inflater.inflate(R.layout.test,null);
+            LinearLayout view= (LinearLayout) inflater.inflate(R.layout.loction_click_tip,null);
             TextView text= (TextView) view.getChildAt(0);
             text.setText(str);
             LinearLayout thiss= (LinearLayout) findViewById(R.id.map);

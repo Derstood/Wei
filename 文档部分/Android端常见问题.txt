@@ -1,0 +1,4 @@
+Q1: requestWindowFeature 设置无效?
+A: 继承于Activity而不是AppCompatActivity
+
+Q2:
