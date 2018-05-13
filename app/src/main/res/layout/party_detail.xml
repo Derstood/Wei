@@ -36,6 +36,84 @@
             android:text="5.0分   宣讲"
             />
     </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        >
+        <TextView
+            android:layout_width="1dp"
+            android:layout_weight="1"
+            android:layout_height="fill_parent"
+            android:text="发起人"
+            />
+        <TextView
+            android:layout_width="1dp"
+            android:layout_weight="1"
+            android:layout_height="fill_parent"
+            android:text="人数"
+            android:layout_marginLeft="20dp"
+            />
 
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        >
+        <TextView
+            android:layout_width="1dp"
+            android:layout_weight="1"
+            android:layout_height="fill_parent"
+            android:text="0元"
+            />
+        <TextView
+            android:layout_width="1dp"
+            android:layout_weight="1"
+            android:layout_height="fill_parent"
+            android:text="时间XXXX"
+            android:layout_marginLeft="20dp"
+            />
 
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_weight="1"
+        >
+        <TextView
+            android:layout_width="1dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:text="距离"
+            />
+        <TextView
+            android:layout_width="1dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="3"
+            android:text="地点XXXXXXXXXXXXXX"
+            />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_weight="3"
+        android:orientation="vertical"
+        >
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="简介"
+            android:textSize="50dp"
+            />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="xxxxxxxxxxxxxxfadsffffffffffffffffffffffdaf"
+            />
+        
+    </LinearLayout>
 </LinearLayout>
