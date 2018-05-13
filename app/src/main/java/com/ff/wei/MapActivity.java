@@ -1,10 +1,12 @@
 package com.ff.wei;
 
 import bean.OverLay;
+import party.CreatePartyActivity;
 import util.FileOperation;
 import util.GetPermission;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -64,12 +66,9 @@ public class MapActivity extends Activity implements View.OnClickListener,Activi
     //定位相关
     public static LocationClient mLocationClient;
     private MyLocationListener mLocationListener;
-    //是否第一次定位，如果是第一次定位的话要将自己的位置显示在地图 中间
-    private boolean isFirstLocation = true;
-    //创建自己的箭头定位
+    //创建方的圆的图标
     private BitmapDescriptor bitmapDescriptorRound,bitmapDescriptorSquare;
-    //经纬度
-    LatLng myLastLoction=new LatLng(-1,-1);
+    //用户
     public static OverLay Myself=new OverLay();
     //方向传感器监听
     private float mLastDirect;
@@ -89,11 +88,10 @@ public class MapActivity extends Activity implements View.OnClickListener,Activi
 
         addTestData();
 
-        //在意该使用SDK各组件之前初始化context信息，传入ApplicationContext
         //注方法要再setContentView方法之前实现
         SDKInitializer.initialize(getApplicationContext());
+        //设置隐藏标题
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-
         setContentView(R.layout.activity_map);
 
         //初始化控件
@@ -101,10 +99,6 @@ public class MapActivity extends Activity implements View.OnClickListener,Activi
         //初始化地图
         initMap();
         initLocation();
-        //创建自己的定位图标，结合方向传感器，定位的时候显示自己的方向
-        //initMyLoc();
-        //创建marker信息
-        d("status1","finished Created");
     }
 
     private void initMyLoc() {
@@ -200,7 +194,6 @@ public class MapActivity extends Activity implements View.OnClickListener,Activi
         option.setScanSpan(1000);//毫秒定位一次
         option.setIsNeedLocationPoiList(true);//可选，默认false，设置是否需要POI结果，可以在BDLocation.getPoiList里得到
         mLocationClient.setLocOption(option);
-
     }
     private void initView() {
         //地图控制按钮
@@ -220,10 +213,11 @@ public class MapActivity extends Activity implements View.OnClickListener,Activi
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.testBT:
-
                 backToCenter();
-                //createView("hhh");
-
+                break;
+            case R.id.createPartyBT:
+                Intent intent=new Intent(this, CreatePartyActivity.class);
+                startActivity(intent);
                 break;
         }
     }
@@ -259,7 +253,6 @@ public class MapActivity extends Activity implements View.OnClickListener,Activi
                 .rotate(0)
                 .position(latLng);
         mBaiduMap.addOverlay(textOption);
-
         //使用marker携带info信息，当点击事件的时候可以通过marker获得info信息
         Bundle bundle = new Bundle();
             //info必须实现序列化接口
@@ -307,38 +300,38 @@ public class MapActivity extends Activity implements View.OnClickListener,Activi
         @Override
         public void onReceiveLocation(BDLocation location) {
             //若位置并未改变则直接跳出函数
-            if(myLastLoction.latitude==location.getLatitude()&&myLastLoction.longitude==location.getLongitude()){
+            if(Myself.getLat()==location.getLatitude()&&Myself.getLng()==location.getLongitude()){
                 return ;
             }
-            myLastLoction=new LatLng(location.getLatitude(),location.getLongitude());
+            Log.d("testInfo","first:"+Myself.getLat()+"~"+Myself.getLng());
             Log.d("myTest","location changed");
             //将获取的location信息给百度map
             MyLocationData data = new MyLocationData.Builder()
                     .accuracy(location.getRadius())
                     // 此处设置开发者获取到的方向信息，顺时针0-360
-                    .direction(mLastDirect)
+                    .direction(location.getDirection())
                     .latitude(location.getLatitude())
                     .longitude(location.getLongitude())
                     .build();
             mBaiduMap.setMyLocationData(data);
             //更新经纬度
-            Myself.setLat(location.getLatitude());
-            Myself.setLng(location.getLongitude());
+            if(Myself.getLat()==Myself.getLng()&&Myself.getLng()==0.0){
+                Myself.setLat(location.getLatitude());
+                Myself.setLng(location.getLongitude());
+                backToCenter();
+            }else{
+                Myself.setLat(location.getLatitude());
+                Myself.setLng(location.getLongitude());
+            }
+            addOverlay(Myself);
             //配置定位图层显示方式，使用自己的定位图标
             MyLocationConfiguration configuration = new MyLocationConfiguration(MyLocationConfiguration.LocationMode.NORMAL, true, bitmapDescriptorRound);
             mBaiduMap.setMyLocationConfigeration(configuration);
-            if(isFirstLocation&&location.getAddrStr()!=null){
-                showInfo("loc:"+location+"\nlat:"+location.getLatitude()+"\nlng:"+location.getLongitude());
-                showInfo("位置：" + location.getAddrStr());
-                Log.d("testt","loc:"+location+"\nlat:"+location.getLatitude()+"\nlng:"+location.getLongitude());
-                isFirstLocation = false;
-                //地图变化显示
-                backToCenter();
+            if(location.getAddrStr()!=null){
+                Log.d("testInfo","位置已变:"+location.getAddrStr());
             }
-
             //mBaiduMap.clear();
             //addOverlay(overLays);
-
         }
     }
 
@@ -412,6 +405,10 @@ public class MapActivity extends Activity implements View.OnClickListener,Activi
             LayoutInflater inflater=getLayoutInflater();
             LinearLayout view= (LinearLayout) inflater.inflate(R.layout.loction_click_tip,null);
             TextView text= (TextView) view.getChildAt(0);
+            LinearLayout  linearLayoutChild= (LinearLayout) view.getChildAt(1);
+            Button bt = (Button) linearLayoutChild.getChildAt(0);
+            bt.setOnClickListener(this);
+
             text.setText(str);
             LinearLayout thiss= (LinearLayout) findViewById(R.id.map);
             LinearLayout thisss= (LinearLayout) thiss.getChildAt(0);

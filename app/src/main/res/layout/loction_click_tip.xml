@@ -17,6 +17,7 @@
         android:layout_width="60dp"
         android:layout_height="50dp">
         <Button
+            android:id="@+id/createPartyBT"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:text="创建"
