@@ -28,7 +28,7 @@ android:background="@android:color/transparent">
 
         </LinearLayout>
 
-        <LinearLayout
+        <!--<LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1">
@@ -37,7 +37,7 @@ android:background="@android:color/transparent">
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="测试BT" />
-        </LinearLayout>
+        </LinearLayout>-->
 
     </LinearLayout>
 
@@ -47,11 +47,16 @@ android:background="@android:color/transparent">
     android:layout_width="240dp"
     android:layout_height="match_parent"
     android:layout_gravity="start"
-    android:background="@color/colorPrimary"
+    android:background="@color/HuaweiGreen"
     android:paddingTop="50dp">
 
-    <include
-        layout="@layout/loction_click_tip"
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="login"
+        android:textColor="@color/HuaweiGreen"
+        android:background="@drawable/radius_bt_goto_login"
+        android:id="@+id/gotoLogin"
         />
 
 </RelativeLayout>

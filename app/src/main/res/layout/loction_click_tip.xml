@@ -5,22 +5,33 @@
     android:layout_height="100dp"
     android:id="@+id/testLay"
     android:layout_weight="2"
+    android:padding="30dp"
+    android:background="@color/HuaweiGreen"
     >
 
     <TextView
         android:id="@+id/testText"
         android:layout_width="378dp"
         android:layout_height="50dp"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:textSize="24dp"
+        android:textColor="@color/HuaweiYellow"
+        android:maxLines = "2"
+        android:scrollbars = "vertical"
+        android:layout_marginRight="30dp"
+        />
 
     <LinearLayout
-        android:layout_width="60dp"
-        android:layout_height="50dp">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
         <Button
             android:id="@+id/createPartyBT"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:text="创建"
+            android:background="@drawable/radius_bt_in_click_tip"
+            android:textColor="@color/HuaweiGreen"
+            android:padding="10dp"
             />
     </LinearLayout>
 </LinearLayout>

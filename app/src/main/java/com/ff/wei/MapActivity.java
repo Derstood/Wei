@@ -1,7 +1,11 @@
 package com.ff.wei;
 
 import bean.OverLay;
+import bean.Party;
+import bean.User;
+import login.LoginActivity;
 import party.CreatePartyActivity;
+import party.PartyDetailActivity;
 import util.FileOperation;
 import util.GetPermission;
 
@@ -11,6 +15,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,7 +56,9 @@ import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static android.util.Log.d;
 
@@ -69,19 +76,19 @@ public class MapActivity extends Activity implements View.OnClickListener,Activi
     //创建方的圆的图标
     private BitmapDescriptor bitmapDescriptorRound,bitmapDescriptorSquare;
     //用户
-    public static OverLay Myself=new OverLay();
+    public static User Myself=new User();
+    Map<String,OverLay> overLayMap=new HashMap<>();
     //方向传感器监听
     private float mLastDirect;
     //显示marker
     private boolean showMarker = false;
 
     private List<OverLay> overLays=new ArrayList<>();
-    private Button addOver;
-
     private View tips;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d("lifee","create");
         super.onCreate(savedInstanceState);
         GetPermission.makePermission(MapActivity.this,MapActivity.this);// 请求权限
         setMapCustomStyle();//设置地图风格
@@ -169,7 +176,7 @@ public class MapActivity extends Activity implements View.OnClickListener,Activi
                         }
                         //获取反向地理编码结果
                         //showInfo("addr:"+result.getAddress());
-                        createView(result.getAddress());
+                        createView(result.getAddress(),0);
                     }
                 };
                 mSearch.setOnGetGeoCodeResultListener(listener);
@@ -196,9 +203,12 @@ public class MapActivity extends Activity implements View.OnClickListener,Activi
         mLocationClient.setLocOption(option);
     }
     private void initView() {
-        //地图控制按钮
-        addOver=(Button)findViewById(R.id.testBT);
-        addOver.setOnClickListener(this);
+        //测试按钮
+       /* Button testBT=(Button)findViewById(R.id.testBT);
+        testBT.setOnClickListener(this);*/
+
+        Button gotoLogin=(Button)findViewById(R.id.gotoLogin);
+        gotoLogin.setOnClickListener(this);
     }
 
     public void addTestData(){
@@ -211,53 +221,71 @@ public class MapActivity extends Activity implements View.OnClickListener,Activi
         GetPermission.onRequestPermissionsResult(requestCode,permissions,grantResults);
     }
     public void onClick(View v) {
+        Intent intent;
         switch (v.getId()) {
-            case R.id.testBT:
-                backToCenter();
-                break;
+           /* case R.id.testBT:
+                //backToCenter();
+                intent =new Intent(this, LoginActivity.class);
+                startActivity(intent);
+                break;*/
             case R.id.createPartyBT:
-                Intent intent=new Intent(this, CreatePartyActivity.class);
+                Button b=(Button)v;
+                if(b.getText().equals("创建")){
+                    intent=new Intent(this, CreatePartyActivity.class);
+                    startActivity(intent);
+                }else{
+                    //查看活动详情
+                    intent =new Intent(this, PartyDetailActivity.class);
+                    intent.putExtra("actID","666");
+                    startActivity(intent);
+                }
+                break;
+            case R.id.gotoLogin:
+                intent=new Intent(this,LoginActivity.class);
                 startActivity(intent);
                 break;
         }
     }
     //显示marker
-    private void addOverlay(final OverLay over) {
+    private void addOverlays() {
         //清空地图
         mBaiduMap.clear();
         BitmapDescriptor bitmap;
         //创建marker的显示图标
-        if(over.getType().equals("user")){
-            bitmap = BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher_round);
-        }else{
-            bitmap = BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher);
-        }
-        LatLng latLng = new LatLng(over.getLat(),over.getLng());
-        Marker marker;
-        OverlayOptions options;
+        for (OverLay over:overLayMap.values()) {
+            if(over.getType().equals("user")){
+                bitmap = BitmapDescriptorFactory.fromResource(R.mipmap.my);
+            }else{
+                bitmap = BitmapDescriptorFactory.fromResource(R.mipmap.activitys);
+            }
+            LatLng latLng = new LatLng(over.getLat(),over.getLng());
+            Marker marker;
+            OverlayOptions options;
             //设置marker
-        options = new MarkerOptions()
+            options = new MarkerOptions()
                     .position(latLng)//设置位置
                     .icon(bitmap)//设置图标样式
                     .zIndex(9) // 设置marker所在层级
                     .draggable(false); // 设置手势拖拽;
             //添加marker
-        marker = (Marker) mBaiduMap.addOverlay(options);
-
-        //添加上方文字
-        OverlayOptions textOption = new TextOptions()
-                .bgColor(0xAAFFFF00)
-                .fontSize(50)
-                .fontColor(0xFFFF00FF)
-                .text(over.getName())
-                .rotate(0)
-                .position(latLng);
-        mBaiduMap.addOverlay(textOption);
-        //使用marker携带info信息，当点击事件的时候可以通过marker获得info信息
-        Bundle bundle = new Bundle();
+            marker = (Marker) mBaiduMap.addOverlay(options);
+            //添加上方文字
+            latLng = new LatLng(over.getLat()+0.004,over.getLng());
+            OverlayOptions textOption = new TextOptions()
+                    .bgColor(0x00FFFFFF)
+                    .fontSize(40)
+                    .fontColor(0xFF00FFFF)
+                    .text(over.getName())
+                    .rotate(0)
+                    .position(latLng);
+            mBaiduMap.addOverlay(textOption);
+            //使用marker携带info信息，当点击事件的时候可以通过marker获得info信息
+            Bundle bundle = new Bundle();
             //info必须实现序列化接口
-        bundle.putSerializable("overLays", over);
-        marker.setExtraInfo(bundle);
+            bundle.putSerializable("overLays", over);
+            marker.setExtraInfo(bundle);
+        }
+
         //添加marker点击事件的监听
         if(markListener!=null){
             mBaiduMap.removeMarkerClickListener(markListener); //防止监听重叠
@@ -273,22 +301,44 @@ public class MapActivity extends Activity implements View.OnClickListener,Activi
                     Log.d("info","no getting");
                     return false;
                 }
-                Log.d("info","clickTest:"+u.getName());
+                if(u.getType().equals("user")){
+                    //添加消息窗口
+                    if(u.showInfoWindow){
+                        u.showInfoWindow=false;
+                        bundle.putSerializable("overLays",u);
+                        mBaiduMap.hideInfoWindow();
+                    }else{
+                        u.showInfoWindow=true;
+                        //创建InfoWindow展示的view
+                        Button button = new Button(getApplicationContext());
+                        button.setText(u.getName());
 
-                //添加消息窗口
-                if(u.showInfoWindow){
-                    u.showInfoWindow=false;
-                    bundle.putSerializable("overLays",u);
-                    mBaiduMap.hideInfoWindow();
+                        LatLng pt = new LatLng(u.getLat(), u.getLng());
+                        InfoWindow mInfoWindow = new InfoWindow(button, pt, -150);
+                        mBaiduMap.showInfoWindow(mInfoWindow);
+                    }
                 }else{
-                    u.showInfoWindow=true;
-                    //创建InfoWindow展示的view
-                    Button button = new Button(getApplicationContext());
-                    button.setText(u.getName());
-
-                    LatLng pt = new LatLng(over.getLat(), over.getLng());
-                    InfoWindow mInfoWindow = new InfoWindow(button, pt, -150);
-                    mBaiduMap.showInfoWindow(mInfoWindow);
+                    GeoCoder mSearch = GeoCoder.newInstance();
+                    OnGetGeoCoderResultListener listener = new OnGetGeoCoderResultListener() {
+                        public void onGetGeoCodeResult(GeoCodeResult result) {
+                            if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
+                                //没有检索到结果
+                            }
+                            //获取地理编码结果
+                        }
+                        public void onGetReverseGeoCodeResult(ReverseGeoCodeResult result) {
+                            if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
+                                //没有找到检索结果
+                            }
+                            //获取反向地理编码结果
+                            //showInfo("addr:"+result.getAddress());
+                            createView(result.getAddress(),1);
+                        }
+                    };
+                    mSearch.setOnGetGeoCodeResultListener(listener);
+                    mSearch.reverseGeoCode(new ReverseGeoCodeOption()
+                            .location(new LatLng(u.getLat(),u.getLng())));
+                    mSearch.destroy();
                 }
                 return true;
             }
@@ -323,7 +373,9 @@ public class MapActivity extends Activity implements View.OnClickListener,Activi
                 Myself.setLat(location.getLatitude());
                 Myself.setLng(location.getLongitude());
             }
-            addOverlay(Myself);
+            overLayMap.put(Myself.getName(),Myself);
+            overLayMap.put("testACT",new OverLay(Myself.getLat()+0.01,Myself.getLng()+0.01,"testACT","activity"));  //添加一条测试数据
+            addOverlays();
             //配置定位图层显示方式，使用自己的定位图标
             MyLocationConfiguration configuration = new MyLocationConfiguration(MyLocationConfiguration.LocationMode.NORMAL, true, bitmapDescriptorRound);
             mBaiduMap.setMyLocationConfigeration(configuration);
@@ -338,6 +390,7 @@ public class MapActivity extends Activity implements View.OnClickListener,Activi
     @Override
     protected void onStart() {
         super.onStart();
+        Log.d("lifee","start");
         //开启定位
         mBaiduMap.setMyLocationEnabled(true);
         if(!mLocationClient.isStarted()){
@@ -347,6 +400,7 @@ public class MapActivity extends Activity implements View.OnClickListener,Activi
     @Override
     protected void onStop() {
         super.onStop();
+        Log.d("lifee","stop");
         //关闭定位
         mBaiduMap.setMyLocationEnabled(false);
         if(mLocationClient.isStarted()){
@@ -355,18 +409,22 @@ public class MapActivity extends Activity implements View.OnClickListener,Activi
     }
     @Override
     protected void onDestroy() {
+
         super.onDestroy();
         //在activity执行onDestroy时执行mMapView.onDestroy()，实现地图生命周期管理
         mMapView.onDestroy();
+        Log.d("lifee","destroy");
     }
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d("lifee","resume");
         //在activity执行onResume时执行mMapView. onResume ()，实现地图生命周期管理
         mMapView.onResume();
     }
     @Override
     protected void onPause() {
+        Log.d("lifee","pause");
         super.onPause();
         //在activity执行onPause时执行mMapView. onPause ()，实现地图生命周期管理
         mMapView.onPause();
@@ -400,7 +458,7 @@ public class MapActivity extends Activity implements View.OnClickListener,Activi
         }
     }
 
-    public void createView(String str){
+    public void createView(String str,int type){
         if(tips==null){
             LayoutInflater inflater=getLayoutInflater();
             LinearLayout view= (LinearLayout) inflater.inflate(R.layout.loction_click_tip,null);
@@ -408,8 +466,11 @@ public class MapActivity extends Activity implements View.OnClickListener,Activi
             LinearLayout  linearLayoutChild= (LinearLayout) view.getChildAt(1);
             Button bt = (Button) linearLayoutChild.getChildAt(0);
             bt.setOnClickListener(this);
-
+            if(type==1){
+                bt.setText("查看活动");
+            }
             text.setText(str);
+            text.setMovementMethod(new ScrollingMovementMethod());
             LinearLayout thiss= (LinearLayout) findViewById(R.id.map);
             LinearLayout thisss= (LinearLayout) thiss.getChildAt(0);
             thisss.addView(view);
@@ -420,16 +481,21 @@ public class MapActivity extends Activity implements View.OnClickListener,Activi
             thisss.removeView(tips);
             tips=null;
         }
-
-
     }
 
     public void backToCenter(){
         LatLng ll = new LatLng(Myself.getLat(),Myself.getLng());
-        addOverlay(Myself);
+        //addOverlays();
         MapStatusUpdate status = MapStatusUpdateFactory.newLatLng(ll);
         //mBaiduMap.setMapStatus(status);//直接到中间
         mBaiduMap.animateMapStatus(status);//动画的方式到中间
     }
 
+    public void changeLoc(String name,LatLng latlng){
+        OverLay overLay = overLayMap.get(name);
+        overLay.setLat(latlng.latitude);
+        overLay.setLng(latlng.longitude);
+        overLayMap.put(name,overLay);
+        addOverlays();
+    }
 }
