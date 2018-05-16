@@ -27,6 +27,9 @@ import android.widget.TextView;
 
 import com.ff.wei.R;
 
+import message.MessageActivity;
+import message.MessageListActivity;
+
 public class LoginActivity extends Activity implements View.OnClickListener {
 
     @Override
@@ -44,14 +47,17 @@ public class LoginActivity extends Activity implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
+        Intent intent;
         switch (v.getId()){
             case R.id.login:
                 //登录操作
+                intent=new Intent(this, MessageListActivity.class);
+                startActivity(intent);
                 Log.d("testInfo","logined");
                 break;
             case R.id.bt_goto_register:
                 //转注册页面
-                Intent intent=new Intent(this,RegisterActivity.class);
+                intent=new Intent(this,RegisterActivity.class);
                 startActivity(intent);
                 Log.d("testInfo","startAct");
                 break;

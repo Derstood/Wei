@@ -1,4 +1,6 @@
 Q1: requestWindowFeature 设置无效?
 A: 继承于Activity而不是AppCompatActivity
 
-Q2:
+Q2:findViewById 返回的是null?
+A: setContentView后再findView
+

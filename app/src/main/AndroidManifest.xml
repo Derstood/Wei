@@ -3,6 +3,7 @@
     package="com.ff.wei">
 
     <application
+        android:name="util.ThisAPP"
         android:allowBackup="true"
         android:icon="@mipmap/icon"
         android:label="为为为"
@@ -32,6 +33,8 @@
         <activity android:name="login.LoginActivity" android:launchMode="singleTask"></activity>
         <activity android:name="login.RegisterActivity" android:launchMode="singleTask"></activity>
         <activity android:name="party.PartyDetailActivity"></activity>
+        <activity android:name="message.MessageActivity"></activity>
+        <activity android:name="message.MessageListActivity"></activity>
     </application>
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>

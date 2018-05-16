@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="message.MessageActivity"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv"
+        android:layout_width="match_parent"
+        android:layout_height="470dp" />
+
+
+
+
+        <EditText
+            android:id="@+id/inputbox"
+            android:layout_width="250dp"
+            android:layout_height="40dp"
+            android:background="@color/colorPrimary"
+            android:hint="@string/inputbox_hint"
+            android:layout_below="@id/rv"
+            />
+
+        <Button
+            android:id="@+id/sendButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/send_button"
+            android:layout_below="@id/rv"
+            android:layout_toRightOf="@id/inputbox"
+            />
+
+
+
+</RelativeLayout>
