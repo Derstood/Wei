@@ -7,6 +7,11 @@ import android.animation.PropertyValuesHolder;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,6 +21,7 @@ import android.view.Window;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -42,14 +48,17 @@ public class LoginActivity extends Activity implements View.OnClickListener {
             case R.id.login:
                 //登录操作
                 Log.d("testInfo","logined");
-                v.setVisibility(View.GONE);
                 break;
             case R.id.bt_goto_register:
                 //转注册页面
                 Intent intent=new Intent(this,RegisterActivity.class);
                 startActivity(intent);
                 Log.d("testInfo","startAct");
+                break;
+            case R.id.avatar:
+                intent = new Intent(Intent.ACTION_PICK,
+                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(intent, 111);
         }
     }
-
 }

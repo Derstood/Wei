@@ -3,23 +3,34 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/LightHuaweiGreen"
-    android:padding="30dp"
+    android:padding="45dp"
 
     >
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_weight="4"
-        ></LinearLayout>
+        android:layout_marginBottom="25dp"
+        >
+        <ImageView
+            android:id="@+id/avatar"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:clickable="true"
+            />
+
+    </LinearLayout>
     <EditText
         android:id="@+id/login_user"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_weight="1"
         android:hint="帐号/用户名/邮箱"
+        android:textSize="24dp"
+        android:textColor="@color/HuaweiGreen"
         android:layout_gravity="center"
         android:background="@drawable/radius_edit"
-        android:paddingLeft="20dp"
+        android:paddingLeft="30dp"
         />
     <EditText
         android:id="@+id/login_password"
@@ -27,18 +38,20 @@
         android:layout_height="1dp"
         android:layout_weight="1"
         android:hint="密码"
+        android:textSize="24dp"
+        android:textColor="@color/HuaweiGreen"
         android:background="@drawable/radius_edit"
-        android:paddingLeft="20dp"
+        android:paddingLeft="30dp"
         android:layout_marginTop="20dp"
         />
     <Button
         android:id="@+id/login"
-        android:layout_width="wrap_content"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:paddingLeft="50dp"
         android:paddingRight="50dp"
         android:text="Login"
-        android:textSize="30dp"
+        android:textSize="40dp"
         android:textColor="@color/HuaweiYellow"
         android:layout_gravity="center"
         android:background="@drawable/radius_bt_login"
@@ -56,6 +69,7 @@
             android:layout_height="wrap_content"
             android:text="还没有帐号？注册"
             android:textSize="18dp"
+            android:textColor="@color/HuaweiGreen"
             android:clickable="true"
             android:layout_gravity="center"
             android:layout_marginLeft="20dp"
