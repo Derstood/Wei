@@ -274,7 +274,7 @@ public class MapActivity extends Activity implements View.OnClickListener,Activi
             OverlayOptions textOption = new TextOptions()
                     .bgColor(0x00FFFFFF)
                     .fontSize(40)
-                    .fontColor(0xFF00FFFF)
+                    .fontColor(0xFF000000)
                     .text(over.getName())
                     .rotate(0)
                     .position(latLng);

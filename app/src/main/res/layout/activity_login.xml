@@ -1,135 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="login.LoginActivity">
+    android:background="@color/LightHuaweiGreen"
+    android:padding="30dp"
 
-
-    <RelativeLayout
-        android:id="@+id/relativeLayout2"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:background="@drawable/register_main"
-        android:radius="30dip"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.3"
-        tools:context=".LoginActivity"
-        tools:ignore="RtlCompat">
-
-        <include
-            android:id="@+id/main_title"
-            layout="@layout/title_layout"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            tools:ignore="IncludeLayoutParam" />
-
-        <LinearLayout
-            android:id="@+id/linearLayout2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/main_title"
-            android:orientation="vertical">
-
-            <ImageView
-                android:layout_width="55dip"
-                android:layout_height="55dip"
-                android:layout_gravity="center_horizontal"
-                android:src="#000" />
-
-            <!--<TextView-->
-            <!--android:layout_width="fill_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_marginTop="5dip"-->
-            <!--android:gravity="center"-->
-            <!--android:text="WLECOME TO 为"-->
-            <!--android:textColor="#ffffff"-->
-            <!--android:textSize="24sp" />-->
-
-            <!--<TextView-->
-            <!--android:layout_width="fill_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:gravity="center"-->
-            <!--android:text="SHOW YOUR IDEAS"-->
-            <!--android:textColor="#ffffff"-->
-            <!--android:textSize="16sp" />-->
-        </LinearLayout>
-
-        <RelativeLayout
-            android:id="@+id/relativeLayout"
-            android:layout_width="match_parent"
-            android:layout_height="176dp"
-            android:layout_centerInParent="true">
-
-            <include
-                android:id="@+id/login_input_layout"
-                layout="@layout/login_input_layout"
-                android:layout_width="match_parent"
-                android:layout_height="130dp"
-                android:layout_alignBottom="@+id/main_btn_login"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_marginBottom="25dp"
-                tools:ignore="NotSibling" />
-
-            <include
-                android:id="@+id/layout_progress"
-                layout="@layout/layout_progress"
-                android:layout_width="match_parent"
-                android:layout_height="130dip"
-                android:visibility="gone" />
-
-        </RelativeLayout>
-
-        <TextView
-            android:id="@+id/main_btn_login"
-            android:layout_width="164dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/relativeLayout"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="36dp"
-            android:background="@drawable/text_bg"
-            android:gravity="center"
-            android:paddingBottom="2dip"
-            android:paddingLeft="30dip"
-            android:paddingRight="30dip"
-            android:paddingTop="2dip"
-            android:text="   Login    "
-            android:textColor="#ffffff"
-            android:textSize="20sp" />
-
-    </RelativeLayout>
-
-    <TextView
-        android:id="@+id/main_btn_login2"
+    >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_weight="4"
+        ></LinearLayout>
+    <EditText
+        android:id="@+id/login_user"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_weight="1"
+        android:hint="帐号/用户名/邮箱"
+        android:layout_gravity="center"
+        android:background="@drawable/radius_edit"
+        android:paddingLeft="20dp"
+        />
+    <EditText
+        android:id="@+id/login_password"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_weight="1"
+        android:hint="密码"
+        android:background="@drawable/radius_edit"
+        android:paddingLeft="20dp"
+        android:layout_marginTop="20dp"
+        />
+    <Button
+        android:id="@+id/login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/linearLayout2"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="24dp"
-        android:background="#ffffff"
-        android:gravity="center"
-        android:paddingBottom="2dip"
-        android:paddingLeft="30dip"
-        android:paddingRight="30dip"
-        android:paddingTop="2dip"
-        android:text="未拥有账号？注册"
-        android:textColor="#000"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/relativeLayout2"
-        app:layout_constraintVertical_bias="0.607"
-        tools:ignore="NotSibling" />
+        android:paddingLeft="50dp"
+        android:paddingRight="50dp"
+        android:text="Login"
+        android:textSize="30dp"
+        android:textColor="@color/HuaweiYellow"
+        android:layout_gravity="center"
+        android:background="@drawable/radius_bt_login"
+        android:layout_margin="40dp"
+        />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        >
+        <TextView
+            android:id="@+id/bt_goto_register"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="还没有帐号？注册"
+            android:textSize="18dp"
+            android:clickable="true"
+            android:layout_gravity="center"
+            android:layout_marginLeft="20dp"
+            />
 
-</android.support.constraint.ConstraintLayout>
+    </LinearLayout>
+</LinearLayout>

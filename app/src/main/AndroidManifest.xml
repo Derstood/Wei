@@ -29,8 +29,8 @@
         </service>
 
 
-        <activity android:name="login.LoginActivity"></activity>
-        <activity android:name="login.RegisterActivity"></activity>
+        <activity android:name="login.LoginActivity" android:launchMode="singleTask"></activity>
+        <activity android:name="login.RegisterActivity" android:launchMode="singleTask"></activity>
         <activity android:name="party.PartyDetailActivity"></activity>
     </application>
 
