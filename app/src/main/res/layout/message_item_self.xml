@@ -12,12 +12,14 @@
 
     <TextView
         android:id="@+id/content"
-        android:layout_width="270dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
+        android:background="@drawable/radius_self_message"
         android:gravity="left"
         android:text="abcdefghijklmnopqrstuvwxsdfas123456123456"
-        android:textColor="@color/colorAccent"
-        android:textSize="25sp" />
+        android:textColor="@color/HuaweiYellow"
+        android:textSize="25sp"
+        android:padding="20dp"
+        />
 
 </RelativeLayout>

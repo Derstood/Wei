@@ -25,20 +25,29 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.ff.wei.MapActivity;
 import com.ff.wei.R;
+
+import org.w3c.dom.Document;
 
 import message.MessageActivity;
 import message.MessageListActivity;
+import util.ThisAPP;
 
 public class LoginActivity extends Activity implements View.OnClickListener {
+
+    EditText user;
+    EditText password;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_login);
-        EditText user= (EditText) findViewById(R.id.login_user);
-        EditText password= (EditText) findViewById(R.id.login_password);
+        user= (EditText) findViewById(R.id.login_user);
+        password= (EditText) findViewById(R.id.login_password);
+        ImageView avatar=(ImageView)findViewById(R.id.avatar);
+        avatar.setVisibility(View.INVISIBLE);
         Button login=(Button)findViewById(R.id.login);
         login.setOnClickListener(this);
         TextView gotoRegisster=(TextView) findViewById(R.id.bt_goto_register);
@@ -51,9 +60,15 @@ public class LoginActivity extends Activity implements View.OnClickListener {
         switch (v.getId()){
             case R.id.login:
                 //登录操作
-                intent=new Intent(this, MessageListActivity.class);
-                startActivity(intent);
-                Log.d("testInfo","logined");
+                if(login(user.getText()+"",password.getText()+"")){
+                    ThisAPP app=(ThisAPP)getApplication();
+                    app.setSelfID(user.getText()+"");
+                    finish();
+                    Log.d("testInfo","logined");
+                }else{
+                    //登录失败
+                }
+
                 break;
             case R.id.bt_goto_register:
                 //转注册页面
@@ -67,4 +82,15 @@ public class LoginActivity extends Activity implements View.OnClickListener {
                 startActivityForResult(intent, 111);
         }
     }
+    public boolean login(String username,String password){
+
+                String request="<login>\n" +
+                "<userID>"+username+"</userID>\n" +
+                "<password>"+ password+"</password>\n" +
+                "</login>";
+
+                Log.d("testInfo",request);
+        return true;
+    }
+
 }

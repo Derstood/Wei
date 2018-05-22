@@ -7,7 +7,7 @@ import android.app.Application;
  */
 
 public class ThisAPP extends Application {
-    private static String selfID;
+    private static String selfID="none";
 
     public static String getSelfID() {
         return selfID;
@@ -20,6 +20,6 @@ public class ThisAPP extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        selfID="me";
+        selfID="none";
     }
 }

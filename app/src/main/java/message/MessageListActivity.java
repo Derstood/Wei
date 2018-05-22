@@ -24,13 +24,15 @@ import android.widget.Toast;
 
 import bean.Message;
 import util.ThisAPP;
+
+import com.ff.wei.MapActivity;
 import com.ff.wei.R;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MessageListActivity extends AppCompatActivity {
+public class MessageListActivity extends AppCompatActivity{
     private ThisAPP thisApp;
     Message[]  comingMessages;
     @Override
@@ -39,7 +41,8 @@ public class MessageListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_message_list);
         thisApp = (ThisAPP)getApplication();
         //临时设置自己的id为me
-        thisApp.setSelfID("me");
+        //Log.d("testInfo",thisApp.getSelfID());
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -51,7 +54,7 @@ public class MessageListActivity extends AppCompatActivity {
                 Intent intent =new Intent();
                 intent.setAction("Chat_Action");
                 intent.putExtra("chosenMessage",comingMessages[i]);
-                //startActivity(intent);
+                startActivity(intent);
             }
         });
 
@@ -69,6 +72,8 @@ public class MessageListActivity extends AppCompatActivity {
 
         listView.setAdapter(new MessageListApapter(alist,getApplicationContext()));
     }
+
+
 
     private class MessageListApapter extends BaseAdapter{
 
@@ -117,13 +122,14 @@ public class MessageListActivity extends AppCompatActivity {
                 ImageView showType =(ImageView) messageListView.getChildAt(0);
                 if(data[i].getGroup()!=null&&data[i].getTo()==null)//群聊
                 {
-                    showType.setBackgroundColor(Color.parseColor("#3FE1C5"));
+
+                    showType.setBackgroundColor(getResources().getColor(R.color.HuaweiGreen));
                     mesName.setText(data[i].getGroup());
                     mesContent.setText(data[i].getFrom()+": "+data[i].getContent());
                 }
                 else if(data[i].getGroup()==null && data[i].getTo()!=null)//私信
                 {
-                    showType.setBackgroundColor(Color.parseColor("#3F21C5"));
+                    showType.setBackgroundColor(getResources().getColor(R.color.LightHuaweiGreen));
                     mesName.setText(data[i].getFrom());
                     mesContent.setText(data[i].getContent());
                 }
@@ -139,6 +145,12 @@ public class MessageListActivity extends AppCompatActivity {
 
 
         }
+    }
+    @Override
+    public void onBackPressed(){
+        Intent intent=new Intent(this,MapActivity.class);
+        startActivity(intent);
+        Log.d("testInfo","测试back键");
     }
 }
 

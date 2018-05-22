@@ -2,36 +2,66 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
     tools:context="message.MessageActivity"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/LightHuaweiGreen"
+    >
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv"
-        android:layout_width="match_parent"
-        android:layout_height="470dp" />
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical"
+        >
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="9"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="100dp"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            >
+
+            <EditText
+                android:id="@+id/inputbox"
+                android:layout_width="250dp"
+                android:layout_weight="6"
+                android:layout_height="match_parent"
+                android:background="@color/LightHuaweiYellow"
+                android:textColor="@color/HuaweiGreen"
+                android:hint="@string/inputbox_hint"
+                android:layout_below="@id/rv"
+                android:paddingLeft="50dp"
+                />
+
+            <Button
+                android:id="@+id/sendButton"
+                android:layout_width="50dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:text="@string/send_button"
+                android:background="@color/HuaweiGreen"
+                android:textSize="28dp"
+                android:textColor="@color/HuaweiYellow"
+                android:layout_below="@id/rv"
+                android:layout_toRightOf="@id/inputbox"
+                />
+
+        </LinearLayout>
+    </LinearLayout>
 
 
 
-
-        <EditText
-            android:id="@+id/inputbox"
-            android:layout_width="250dp"
-            android:layout_height="40dp"
-            android:background="@color/colorPrimary"
-            android:hint="@string/inputbox_hint"
-            android:layout_below="@id/rv"
-            />
-
-        <Button
-            android:id="@+id/sendButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/send_button"
-            android:layout_below="@id/rv"
-            android:layout_toRightOf="@id/inputbox"
-            />
 
 
 

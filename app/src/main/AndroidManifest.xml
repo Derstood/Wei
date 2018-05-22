@@ -10,7 +10,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MapActivity">
+        <activity android:name=".MapActivity"
+            android:launchMode="singleTask"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -33,8 +35,13 @@
         <activity android:name="login.LoginActivity" android:launchMode="singleTask"></activity>
         <activity android:name="login.RegisterActivity" android:launchMode="singleTask"></activity>
         <activity android:name="party.PartyDetailActivity"></activity>
-        <activity android:name="message.MessageActivity"></activity>
-        <activity android:name="message.MessageListActivity"></activity>
+        <activity android:name="message.MessageActivity" android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="Chat_Action" />
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+        <activity android:name="message.MessageListActivity" android:launchMode="singleTask"></activity>
     </application>
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>

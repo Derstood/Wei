@@ -19,18 +19,21 @@
             android:layout_height="50dp"
             android:layout_weight="1"
             android:orientation="horizontal"
+            android:layout_marginBottom="10dp"
             >
             <TextView
                 android:layout_width="10dp"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
                 android:text="活动名称"
+                android:textSize="30dp"
                 android:gravity="center"
                 />
             <EditText
                 android:layout_width="10dp"
                 android:layout_height="fill_parent"
                 android:layout_weight="2"
+                android:background="@drawable/squrae_edit"
                 />
         </LinearLayout>
 
@@ -39,7 +42,7 @@
             android:layout_height="80dp"
             android:orientation="horizontal"
             android:layout_weight="1"
-            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
             >
 
             <TextView
@@ -47,23 +50,35 @@
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
                 android:gravity="center"
+                android:textSize="30dp"
                 android:text="活动时间" />
 
             <LinearLayout
                 android:layout_width="10dp"
                 android:layout_height="fill_parent"
                 android:layout_weight="2"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:layout_marginBottom="10dp"
+                >
 
                 <EditText
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    android:hint="起始时间"
+                    android:paddingLeft="40dp"
+                    android:background="@drawable/squrae_edit"
+                    />
 
                 <EditText
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    android:hint="结束时间"
+                    android:paddingLeft="40dp"
+                    android:background="@drawable/squrae_edit"
+                    android:padding="30dp"
+                    />
             </LinearLayout>
         </LinearLayout>
 
@@ -71,38 +86,52 @@
             android:layout_width="fill_parent"
             android:layout_height="50dp"
             android:layout_weight="1"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_marginBottom="10dp"
+            >
 
             <TextView
                 android:layout_width="10dp"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="花费" />
+                android:text="花费"
+                android:textSize="30dp"
+                />
 
             <EditText
                 android:layout_width="10dp"
                 android:layout_height="fill_parent"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:background="@drawable/squrae_edit"
+                android:padding="30dp"
+                />
 
             <TextView
                 android:layout_width="10dp"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="人数" />
+                android:text="人数"
+                android:textSize="30dp"
+                />
 
             <EditText
                 android:layout_width="10dp"
                 android:layout_height="fill_parent"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:background="@drawable/squrae_edit"
+                android:padding="30dp"
+                />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="200dp"
             android:layout_weight="2"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_marginBottom="20dp"
+            >
 
             <TextView
                 android:layout_width="1dp"
@@ -112,6 +141,7 @@
                 android:layout_weight="1"
                 android:text="简介"
                 android:gravity="center"
+                android:textSize="30dp"
                 />
 
             <EditText
@@ -119,6 +149,8 @@
                 android:layout_height="fill_parent"
                 android:layout_weight="5"
                 android:gravity="top"
+                android:background="@drawable/squrae_edit"
+                android:padding="30dp"
                 />
 
         </LinearLayout>
@@ -128,6 +160,8 @@
             android:layout_weight="1"
             android:background="@color/HuaweiYellow"
             android:text="创建"
+            android:textSize="30dp"
+            android:textColor="@color/HuaweiGreen"
             />
 
     </LinearLayout>

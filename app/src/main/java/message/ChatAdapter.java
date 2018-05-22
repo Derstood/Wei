@@ -1,5 +1,6 @@
 package message;
 
+import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,7 +23,8 @@ import java.util.List;
 
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatAdapterViewHolder> {
     private List<Message> datalist;
-
+    final int Self=1;
+    final int Other=2;
 
     public ChatAdapter(List<Message> datalist)
     {
@@ -33,9 +35,9 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatAdapterVie
     //1表示自己发送的信息，2表示其他人的信息
     public ChatAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
        switch (viewType){
-           case 1:
+           case Self:
                return new ChatAdapterViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.message_item_self,parent,false));
-           case 2:
+           case Other:
                return new ChatAdapterViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.message_item_other,parent,false));
        }
         return null;
@@ -49,15 +51,14 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatAdapterVie
 
     public int getItemViewType(int position)
     {
-        if(datalist.get(position).getFrom() == ThisAPP.getSelfID())
-            return 1;
+        if(datalist.get(position).getFrom().equals(ThisAPP.getSelfID()))
+            return Self;
         else
-            return 2;
+            return Other;
     }
 
     @Override
     public int getItemCount() { return datalist != null ? datalist.size() : 0;}
-
 
     public static class ChatAdapterViewHolder extends RecyclerView.ViewHolder{
 

@@ -50,14 +50,33 @@ android:background="@android:color/transparent">
     android:background="@color/HuaweiGreen"
     android:paddingTop="50dp">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="login"
-        android:textColor="@color/HuaweiGreen"
-        android:background="@drawable/radius_bt_goto_login"
-        android:id="@+id/gotoLogin"
-        />
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical"
+        >
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="login"
+            android:textColor="@color/HuaweiGreen"
+            android:background="@drawable/radius_bt_goto_login"
+            android:id="@+id/gotoLogin"
+            android:layout_gravity="center"
+            />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="30dp"
+            android:text="消息列表"
+            android:textColor="@color/HuaweiGreen"
+            android:background="@drawable/radius_bt_goto_login"
+            android:id="@+id/goto_message_list"
+            android:layout_gravity="center"
+            />
+
+    </LinearLayout>
 
 </RelativeLayout>
 

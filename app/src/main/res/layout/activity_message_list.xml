@@ -9,7 +9,9 @@
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:theme="@style/AppTheme.AppBarOverlay"
+        android:background="@color/HuaweiGreen"
+        >
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
@@ -17,7 +19,9 @@
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             app:popupTheme="@style/AppTheme.PopupOverlay"
-            app:title="@string/title_activity_message_list"/>
+            app:title="@string/title_activity_message_list"
+            android:clickable="true"
+            />
 
     </android.support.design.widget.AppBarLayout>
 

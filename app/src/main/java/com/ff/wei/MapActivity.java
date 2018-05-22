@@ -1,13 +1,16 @@
 package com.ff.wei;
 
+import bean.Message;
 import bean.OverLay;
 import bean.Party;
 import bean.User;
 import login.LoginActivity;
+import message.MessageListActivity;
 import party.CreatePartyActivity;
 import party.PartyDetailActivity;
 import util.FileOperation;
 import util.GetPermission;
+import util.ThisAPP;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -15,6 +18,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -63,6 +67,10 @@ import java.util.Map;
 import static android.util.Log.d;
 
 public class MapActivity extends Activity implements View.OnClickListener,ActivityCompat.OnRequestPermissionsResultCallback {
+    private ThisAPP thisApp;
+    Message[]  comingMessages;
+
+
     private BaiduMap.OnMarkerClickListener markListener=null;
     public static  MapView mMapView = null;
     public static BaiduMap mBaiduMap;
@@ -85,6 +93,9 @@ public class MapActivity extends Activity implements View.OnClickListener,Activi
 
     private List<OverLay> overLays=new ArrayList<>();
     private View tips;
+
+    Button gotoLogin;
+    Button gotoMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -206,9 +217,19 @@ public class MapActivity extends Activity implements View.OnClickListener,Activi
         //测试按钮
        /* Button testBT=(Button)findViewById(R.id.testBT);
         testBT.setOnClickListener(this);*/
-
-        Button gotoLogin=(Button)findViewById(R.id.gotoLogin);
+        thisApp= (ThisAPP) getApplication();
+        gotoLogin=(Button)findViewById(R.id.gotoLogin);
         gotoLogin.setOnClickListener(this);
+        gotoMessage= (Button) findViewById(R.id.goto_message_list);
+        gotoMessage.setOnClickListener(this);
+        if(thisApp.getSelfID().equals("none")){
+            gotoMessage.setVisibility(View.GONE);
+            gotoLogin.setVisibility(View.VISIBLE);
+        }else{
+            gotoLogin.setVisibility(View.GONE);
+            gotoMessage.setVisibility(View.VISIBLE);
+        }
+
     }
 
     public void addTestData(){
@@ -242,6 +263,10 @@ public class MapActivity extends Activity implements View.OnClickListener,Activi
                 break;
             case R.id.gotoLogin:
                 intent=new Intent(this,LoginActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.goto_message_list:
+                intent=new Intent(this, MessageListActivity.class);
                 startActivity(intent);
                 break;
         }
@@ -418,6 +443,14 @@ public class MapActivity extends Activity implements View.OnClickListener,Activi
     @Override
     protected void onResume() {
         super.onResume();
+        if(thisApp.getSelfID().equals("none")){
+            gotoMessage.setVisibility(View.GONE);
+            gotoLogin.setVisibility(View.VISIBLE);
+        }else{
+            gotoLogin.setVisibility(View.GONE);
+            gotoMessage.setVisibility(View.VISIBLE);
+        }
+
         Log.d("lifee","resume");
         //在activity执行onResume时执行mMapView. onResume ()，实现地图生命周期管理
         mMapView.onResume();
